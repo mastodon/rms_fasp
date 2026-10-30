@@ -28,6 +28,9 @@ gem "solid_queue"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
+# Basic FASP rails engine
+gem "fasp_base", github: "mastodon/fasp_ruby", glob: "fasp_base/*.gemspec"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -52,4 +55,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-gem "fasp_base", git: "git@github.com:mastodon/fasp_ruby", glob: "fasp_base/*.gemspec"
