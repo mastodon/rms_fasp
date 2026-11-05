@@ -31,6 +31,12 @@ gem "bootsnap", require: false
 # Basic FASP rails engine
 gem "fasp_base", github: "mastodon/fasp_ruby", glob: "fasp_base/*.gemspec"
 
+# Allow setting environment variables in .env* files
+gem "dotenv"
+
+# Interface with S3 and compatible services
+gem "aws-sdk-s3"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
