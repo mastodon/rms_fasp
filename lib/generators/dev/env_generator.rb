@@ -11,6 +11,12 @@ module Dev
         AWS_ENDPOINT_URL="http://localhost:3900"
         AWS_ACCESS_KEY_ID="${GARAGE_DEFAULT_ACCESS_KEY}"
         AWS_SECRET_ACCESS_KEY="${GARAGE_DEFAULT_SECRET_KEY}"
+        IMGPROXY_USE_S3="true"
+        IMGPROXY_S3_REGION="garage"
+        IMGPROXY_S3_ENDPOINT="http://localhost:3900"
+        IMGPROXY_KEY="#{SecureRandom.hex(32)}"
+        IMGPROXY_SALT="#{SecureRandom.hex(32)}"
+        IMGPROXY_ENDPOINT="http://localhost:8080"
       VARIABLES
     end
   end

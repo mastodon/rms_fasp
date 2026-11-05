@@ -35,6 +35,14 @@ services:
       - '127.0.0.1:3902:3902'
       - '127.0.0.1:3903:3903'
     command: /garage server --single-node --default-bucket
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:latest
+    restart: unless-stopped
+    networks:
+      - internal_network
+      - external_network
+    ports:
+      - '127.0.0.1:8080:8080'
 
 networks:
   external_network:

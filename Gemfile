@@ -37,6 +37,9 @@ gem "dotenv"
 # Interface with S3 and compatible services
 gem "aws-sdk-s3"
 
+# Generate URLs for imgproxy
+gem "imgproxy"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
