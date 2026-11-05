@@ -1,0 +1,50 @@
+configs:
+  garage_config:
+    content: |
+      metadata_dir = "/var/lib/garage/meta"
+      data_dir = "/var/lib/garage/data"
+      db_engine = "sqlite"
+
+      replication_factor = 1
+
+      rpc_bind_addr = "[::]:3901"
+      rpc_public_addr = "127.0.0.1:3901"
+
+      [s3_api]
+      s3_region = "garage"
+      api_bind_addr = "[::]:3900"
+      # root_domain = ".s3.garage.localhost"
+      # public_endpoint = "http://s3.garage.localhost:3900"
+
+services:
+  garage:
+    image: dxflrs/garage:v2.5.0
+    restart: unless-stopped
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ./garage/meta:/var/lib/garage/meta
+      - ./garage/data:/var/lib/garage/data
+    env_file: .env.development
+    configs:
+      - source: garage_config
+        target: /etc/garage.toml
+    ports:
+      - '127.0.0.1:3900:3900'
+      - '127.0.0.1:3902:3902'
+      - '127.0.0.1:3903:3903'
+    command: /garage server --single-node --default-bucket
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:latest
+    restart: unless-stopped
+    networks:
+      - internal_network
+      - external_network
+    ports:
+      - '127.0.0.1:8080:8080'
+
+networks:
+  external_network:
+  internal_network:
+    internal: true

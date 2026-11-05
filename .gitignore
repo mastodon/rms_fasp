@@ -26,3 +26,5 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
+# Garage volumes for local development
+/garage
