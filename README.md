@@ -156,7 +156,7 @@ combination of the `302` status code and the header to perform the
 redirect internally.
 
 Everything should work without this configuration, as long as imgproxy
-is publicy accessible.
+is publicly accessible.
 
 It is recommended to have the reverse proxy cache images and/or add an
 extra CDN layer with caching.
@@ -199,6 +199,7 @@ rms_fasp can be configured using environment variables. Here is a
 | `PRIVACY_POLICY_LANGUAGE` | No | | The two-letter code for the language your policy is written in |
 | `CONTACT_EMAIL` | No | | A contact email for your instance |
 | `FEDIVERSE_ACCOUNT` | No | | A contact fediverse account for your instance |
+| `RMS_CSP_HOSTS` | No | `${DOMAIN}` | Comma separated list of hosts servers should allow in their CSP, default is fine in most cases, but you might want to add your imgproxy host if it is publicly accessible |
 
 
 ### Object Storage
