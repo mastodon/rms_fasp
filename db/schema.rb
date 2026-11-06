@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_114913) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_092023) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,7 +39,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_114913) do
     t.string "public_key_pem"
     t.string "registration_completion_uri"
     t.json "enabled_capabilities"
+    t.string "namespace", null: false
     t.index ["base_url"], name: "index_fasp_base_servers_on_base_url", unique: true
+    t.index ["namespace"], name: "index_fasp_base_servers_on_namespace", unique: true
     t.index ["user_id"], name: "index_fasp_base_servers_on_user_id"
   end
 
