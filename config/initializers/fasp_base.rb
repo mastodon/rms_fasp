@@ -1,18 +1,20 @@
 FaspBase.tap do |f|
   # Replace with actual fasp name
-  f.fasp_name = Rails.application.name
+  f.fasp_name = ENV.fetch("FASP_NAME", "rms_fasp")
 
   # Domain of the fasp, used to generate URLs outside of a requests context
   f.domain = ENV["DOMAIN"] || ActionController::Base.default_url_options[:host] || "localhost:3000"
 
   # Add supported capabilities here:
-  f.capabilities = []
+  f.capabilities = [
+    { id: "rms", version: "0.1" }
+  ]
 
   # Additional metadata
-  # f.privacy_policy_url = ENV["PRIVACY_POLICY_URL"]
-  # f.privacy_policy_language = ENV["PRIVACY_POLICY_LANGUAGE"]
-  # f.contact_email = ENV["CONTACT_EMAIL"]
-  # f.fediverse_account = ENV["FEDIVERSE_ACCOUNT"]
+  f.privacy_policy_url = ENV.fetch("PRIVACY_POLICY_URL", nil)
+  f.privacy_policy_language = ENV.fetch("PRIVACY_POLICY_LANGUAGE", nil)
+  f.contact_email = ENV.fetch("CONTACT_EMAIL", nil)
+  f.fediverse_account = ENV.fetch("FEDIVERSE_ACCOUNT", nil)
 end
 
 # If you plan to patch classes from the `fasp_base` engine
