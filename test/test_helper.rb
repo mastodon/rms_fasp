@@ -23,7 +23,7 @@ module ActiveSupport
     parallelize(workers: :number_of_processors)
 
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
-    self.fixture_paths << FaspBase::Engine.root.join("test/fixtures")
+    self.fixture_paths.unshift FaspBase::Engine.root.join("test/fixtures")
     fixtures :all
 
     # Add more helper methods to be used by all tests here...

@@ -24,3 +24,6 @@ end
 # Rails.application.config.to_prepare do
 #   FaspBase::Server.prepend FaspBase::ServerExtensions
 # end
+Rails.application.config.to_prepare do
+  FaspBase::Server.prepend FaspBase::ServerExtensions
+end
