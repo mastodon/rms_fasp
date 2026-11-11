@@ -1,0 +1,14 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+public:
+  uri: https://fedi.example.com/posts/1
+  public: true
+  media_urls:
+    - https://fedi.example.com/images/1.jpg
+    - https://fedi.example.com/images/2.png
+
+private:
+  uri: https://fedi.example.com/posts/2
+  public: false
+  media_urls:
+    - https://fedi.example.com/images/3.png
