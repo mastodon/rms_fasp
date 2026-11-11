@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+photo:
+  file_size: 100
+  sha512: d34796c560b676480acbf13b8272440de01dd0526a13afe7be00abcfb81808f18c3939d5dc863622e7a327ca701b9697c16e0bc8978aada8215f6cebd1a4e31b
+  content_type: image/jpeg
+  width: 100
+  height: 50
+
+avatar:
+  file_size: 256
+  sha512: 3398f1fc3e9737d33aa7132b2fe23bfbf042c2989a57edf3e62a84f6a20ec16ddcd71cfbe9e9ddc76b3e702afad71f2a1d2caed53a195d9fa5c6e54870437c56
+  content_type: image/png
+  width: 32
+  height: 32

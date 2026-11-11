@@ -1,0 +1,8 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  fasp_base_server: mastodon_server
+  ap_object: public
+  media_file: photo
+  file_url: https://fedi.example.com/images/1.jpg
+  state: 3
