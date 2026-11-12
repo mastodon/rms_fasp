@@ -6,6 +6,11 @@ Rails.application.routes.draw do
     namespace :rms do
       namespace :v0 do
         resources :features, only: :index
+        resources :media, only: [] do
+          collection do
+            resource :batch, only: :create
+          end
+        end
 
         resource :namespace, only: :show
       end
