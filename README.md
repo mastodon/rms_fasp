@@ -72,7 +72,7 @@ bin/rails secret
 
 will print out a random secret suitable for use as Rails' "secret key
 base", a value used as a basis for cryptographic operations that should
-be unique to every installation of fediscoverer.
+be unique to every installation of rms_fasp.
 
 Place this value in the `SECRET_KEY_BASE` environment variable so it is
 available in the following steps:
@@ -83,7 +83,7 @@ export SECRET_KEY_BASE=<long random key here>
 
 Also make note of this value for later use. You should also consider
 adding this to the shell startup scripts of the user running
-fediscoverer or a `.env` file or similar, so you do not need to repeat
+rms_fasp or a `.env` file or similar, so you do not need to repeat
 this step every time to run maintenance tasks.
 
 #### Step 4: Create And Setup Databases
@@ -141,7 +141,7 @@ to be able to use both services.
 
 #### Step 8: Configure a Frontend Webserver / Reverse Proxy
 
-We recommend you run the fediscoverer web application server behind a
+We recommend you run the rms_fasp web application server behind a
 full-fledged web server that acts as a reverse proxy, handles SSL/TLS
 and serving of static files.
 
@@ -190,7 +190,7 @@ rms_fasp can be configured using environment variables. Here is a
 | -------- | --------- | ------- | ----------- |
 | `SECRET_KEY_BASE` | Yes |  | Random key, unique per installation |
 | `DOMAIN` | Yes | | The domain name under which the web application is accessible |
-| `RMS_FASP_DATABASE_PASSWORD` | No | | Password of the `fediscoverer` user used to access the databases |
+| `RMS_FASP_DATABASE_PASSWORD` | No | | Password of the `rms_fasp` user used to access the databases |
 | `DATABASE_URL` | No |  | Optional PostgreSQL URL to set database host, port etc. |
 | `WEB_CONCURRENCY` | No | `1` | Number of puma application server processes. Can be set to the number of CPUs to make use of all of them |
 | `JOB_CONCURRENCY` | No | `1` | Number of Solid Queue processes. Can be set to the number of CPUs to make use of all of them |
