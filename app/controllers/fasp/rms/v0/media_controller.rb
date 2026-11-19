@@ -2,34 +2,47 @@ module Fasp
   module Rms
     module V0
       class MediaController < Fasp::ApiController
+        before_action :storage_request
+
         def show
           render json: media_response_object
+
+        rescue => error
+          head :not_found
         end
 
         private
 
         def media_response_object
+          raise error unless storage_request
+
           case storage_request.state
-          when :enqueued || :processing
-            response_object_processing
-          when :ok
-            resopnse_object_success
-          when :rejected
+          when "enqueued", "processing"
+            response_object_processing(storage_request.state)
+          when "ok"
+            response_object_success
+          when "rejected"
             response_object_rejected
           end
         end
 
         def storage_request
-          @storage_request = StorageRequest.find_by(media_file_id: params[:id])
+          @storage_request = StorageRequest.find_by(id: params[:id])
         end
 
         def media_file
           @media_file = @storage_request.media_file
         end
 
+        def rejection_reason
+          return unless @storage_request.rejection_reason
+
+          MediaFile::REJECTION_RESPONSE_MAP[@storage_request.rejection_reason.to_sym]
+        end
+
         def response_object_success
           {
-           "id": @storage_request.media_file_id,
+           "id": @storage_request.id,
            "activityPub": {
              "id": @storage_request.ap_object_id
            },
@@ -42,26 +55,29 @@ module Fasp
              "height": media_file.height,
              "width": media_file.width
            },
-           "extension": File.extname(@storage_request.file_url),
+           # depending on what we want
+           # Mime::EXTENSION_LOOKUP.key('image/jpeg') returns `jpeg`
+           # Rack::Mime::MIME_TYPES.key('image/jpeg') returns `.jpeg`
+           "extension": Rack::Mime::MIME_TYPES.key(media_file.content_type),
            # TODO: define representations
            "representations": []
           }
         end
 
-        def response_object_processing
+        def response_object_processing(state)
           {
-           "id": @storage_request.media_file_id,
+           "id": @storage_request.id,
            "activityPub": {
              "id": @storage_request.ap_object_id
            },
            "originalURL": @storage_request.file_url,
-           "status": "processing"
+           "status": state
           }
         end
 
         def response_object_rejected
           {
-           "id": @storage_request.media_file_id,
+           "id": @storage_request.id,
            "activityPub": {
              "id": @storage_request.ap_object_id
            },
@@ -69,8 +85,7 @@ module Fasp
            "status": "rejected",
            "reason": {
              "code": @storage_request.rejection_reason,
-             # TODO: how do we want to handle this?
-             "message": @storage_request.rejection_reason
+             "message": rejection_reason
            }
           }
         end

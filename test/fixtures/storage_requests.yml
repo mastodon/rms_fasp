@@ -2,7 +2,29 @@
 
 one:
   fasp_base_server: mastodon_server
-  ap_object: public
+  ap_object: private
   media_file: photo
   file_url: https://fedi.example.com/images/1.jpg
   state: 3
+  rejection_reason: "RE001"
+
+successful_stored:
+  fasp_base_server: mastodon_server
+  ap_object: public
+  media_file: photo
+  file_url: https://fedi.example.com/images/1.jpg
+  state: 2
+
+processing:
+  fasp_base_server: mastodon_server
+  ap_object: private
+  media_file: photo
+  file_url: https://fedi.example.com/images/1.jpg
+  state: 1
+
+enqueued:
+  fasp_base_server: mastodon_server
+  ap_object: public
+  media_file: avatar
+  file_url: https://fedi.example.com/images/1.jpg
+  state: 0
