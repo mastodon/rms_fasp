@@ -14,11 +14,11 @@ module Fasp
         private
 
         def media_response_object
-          raise error unless storage_request
+          raise unless storage_request
 
           case storage_request.state
           when "enqueued", "processing"
-            response_object_processing(storage_request.state)
+            shared_response_base
           when "ok"
             response_object_success
           when "rejected"
@@ -40,54 +40,39 @@ module Fasp
           MediaFile::REJECTION_RESPONSE_MAP[@storage_request.rejection_reason.to_sym]
         end
 
-        def response_object_success
+        def shared_response_base
           {
-           "id": @storage_request.id,
-           "activityPub": {
-             "id": @storage_request.ap_object_id
-           },
-           "originalURL": @storage_request.file_url,
-           "status": "ok",
-           "contentType": media_file.content_type,
-           "contentLength": media_file.file_size,
-           "contentDigest": media_file.sha512,
-           "metadata": {
-             "height": media_file.height,
-             "width": media_file.width
-           },
-           # depending on what we want
-           # Mime::EXTENSION_LOOKUP.key('image/jpeg') returns `jpeg`
-           # Rack::Mime::MIME_TYPES.key('image/jpeg') returns `.jpeg`
-           "extension": Rack::Mime::MIME_TYPES.key(media_file.content_type),
-           # TODO: define representations
-           "representations": []
+            "id": @storage_request.id,
+            "activityPub": {
+              "id": @storage_request.ap_object_id
+            },
+            "originalURL": @storage_request.file_url,
+            "status": @storage_request.state
           }
         end
 
-        def response_object_processing(state)
-          {
-           "id": @storage_request.id,
-           "activityPub": {
-             "id": @storage_request.ap_object_id
-           },
-           "originalURL": @storage_request.file_url,
-           "status": state
-          }
+        def response_object_success
+          shared_response_base.merge({
+            "contentType": media_file.content_type,
+            "contentLength": media_file.file_size,
+            "contentDigest": media_file.sha512,
+            "metadata": {
+              "height": media_file.height,
+              "width": media_file.width
+            },
+            "extension": Rack::Mime::MIME_TYPES.key(media_file.content_type),
+            # TODO: define representations
+            "representations": []
+          })
         end
 
         def response_object_rejected
-          {
-           "id": @storage_request.id,
-           "activityPub": {
-             "id": @storage_request.ap_object_id
-           },
-           "originalURL": @storage_request.file_url,
-           "status": "rejected",
+          shared_response_base.merge({
            "reason": {
              "code": @storage_request.rejection_reason,
              "message": rejection_reason
            }
-          }
+          })
         end
       end
     end
