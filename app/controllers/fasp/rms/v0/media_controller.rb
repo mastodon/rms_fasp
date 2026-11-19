@@ -18,7 +18,7 @@ module Fasp
 
           case storage_request.state
           when "enqueued", "processing"
-            response_object_processing(storage_request.state)
+            shared_response_base
           when "ok"
             response_object_success
           when "rejected"
@@ -47,12 +47,12 @@ module Fasp
               "id": @storage_request.ap_object_id
             },
             "originalURL": @storage_request.file_url,
+            "status": @storage_request.state
           }
         end
 
         def response_object_success
           shared_response_base.merge({
-            "status": "ok",
             "contentType": media_file.content_type,
             "contentLength": media_file.file_size,
             "contentDigest": media_file.sha512,
@@ -69,15 +69,8 @@ module Fasp
           })
         end
 
-        def response_object_processing(state)
-          shared_response_base.merge({
-           "status": state
-          })
-        end
-
         def response_object_rejected
           shared_response_base.merge({
-           "status": "rejected",
            "reason": {
              "code": @storage_request.rejection_reason,
              "message": rejection_reason
