@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
         resource :namespace, only: :show
       end
+      # GET /rms/:namespace/:id.:ext?sig=:sig
+      # GET /rms/mastodon-social/vid1234/d/300/240.webp?sig=
+      get ":namespace/:id(*any):ext", to: "v0/public_media#show"
     end
   end
 
