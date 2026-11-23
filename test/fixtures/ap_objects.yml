@@ -5,10 +5,14 @@ public:
   public: true
   media_urls:
     - https://fedi.example.com/images/1.jpg
-    - https://fedi.example.com/images/2.png
+    - https://fedi.example.com/images/2.jpg
+    - https://fedi.example.com/images/3.jpg
 
 private:
   uri: https://fedi.example.com/posts/2
   public: false
   media_urls:
     - https://fedi.example.com/images/3.png
+
+unknown:
+  uri: https://fedi.example.com/some/path

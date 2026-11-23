@@ -6,3 +6,39 @@ one:
   media_file: photo
   file_url: https://fedi.example.com/images/1.jpg
   state: 3
+
+enqueued_public_one:
+  fasp_base_server: mastodon_server
+  ap_object: public
+  file_url: https://fedi.example.com/images/2.jpg
+  state: 0
+
+enqueued_public_two:
+  fasp_base_server: mastodon_server
+  ap_object: public
+  file_url: https://fedi.example.com/images/3.jpg
+  state: 0
+
+enqueued_public_wrong_file:
+  fasp_base_server: mastodon_server
+  ap_object: public
+  file_url: https://fedi.example.com/does/not/exist.jpg
+  state: 0
+
+enqueued_private_one:
+  fasp_base_server: mastodon_server
+  ap_object: private
+  file_url: https://fedi.example.com/images/4.jpg
+  state: 0
+
+enqueued_private_two:
+  fasp_base_server: mastodon_server
+  ap_object: private
+  file_url: https://fedi.example.com/images/5.jpg
+  state: 0
+
+enqueued_unknown_object:
+  fasp_base_server: mastodon_server
+  ap_object: unknown
+  file_url: https://fedi.example.com/attachments/1.png
+  state: 0

@@ -7,4 +7,9 @@ class StorageRequest < ApplicationRecord
 
   validates :file_url, presence: true
   validates :rejection_reason, presence: { if: :rejected? }
+
+  def reject!(reason)
+    self.rejection_reason = reason
+    rejected!
+  end
 end
