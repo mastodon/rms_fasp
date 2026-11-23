@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_114527) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_100816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_114527) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["uri"], name: "index_ap_objects_on_uri", unique: true
+  end
+
+  create_table "fasp_base_actors", force: :cascade do |t|
+    t.string "private_key_pem", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "fasp_base_admin_users", force: :cascade do |t|
@@ -40,7 +46,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_114527) do
 
   create_table "fasp_base_servers", force: :cascade do |t|
     t.string "base_url", null: false
-    t.bigint "user_id", null: false
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "fasp_private_key_pem", null: false
