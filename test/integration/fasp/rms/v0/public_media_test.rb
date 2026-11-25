@@ -9,7 +9,7 @@ class Fasp::Rms::V0::PublicMediaTest < ActionDispatch::IntegrationTest
     private_pem = server.fasp_private_key_pem
     key = OpenSSL::PKey.read(private_pem)
     server.update!(public_key_pem: key.public_to_pem)
-    digest = Digest::SHA256.base64digest("http://www.example.com/fasp/rms/mastodon-example-com/#{@file_id}#{@file_ext}")
+    digest = Digest::SHA256.base64digest("http://www.example.com/fasp/rms/mastodon-example-com/#{@file_id}/s/300/400#{@file_ext}")
     sign = key.sign(nil, digest)
     @sig = Base64.encode64(sign)
   end
@@ -21,7 +21,7 @@ class Fasp::Rms::V0::PublicMediaTest < ActionDispatch::IntegrationTest
 #   end
 
   test "authenticated request with accessible medium" do
-    get fasp_rms_path(id: @file_id, namespace: "mastodon-example-com", ext: @file_ext, sig: @sig), as: :json
+    get fasp_rms_path(id: @file_id, namespace: "mastodon-example-com", ext: "png", any: "/s/300/400", sig: @sig), as: :json
     assert_response :ok
 
     parsed_response = JSON.parse(response.body)

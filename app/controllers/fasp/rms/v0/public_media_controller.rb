@@ -3,7 +3,6 @@ module Fasp
     module V0
       class PublicMediaController < ApplicationController
         skip_before_action :require_authentication
-
         before_action :verify_signature_parameter
 
         def show
@@ -50,10 +49,37 @@ module Fasp
         end
 
         def media_file_response
-          variants = request.params[:any]
-          variants.chomp!(".")
+          storage = StorageRequest.find_by(media_file_id: params[:id])
+          response_failure unless storage.state == "ok"
 
-          MediaFile.find(request.params[:id]) if variants.empty?
+          @file_url = storage.file_url
+          # how do we store/load the actual file?
+          # media_file_id = storage.media_file
+          build_signed_image_proxy_url
+        end
+
+        def get_options
+          # this only works, when we allow only one processing Option
+          # need fix
+          variants = request.params[:any]
+          variants.gsub!('/', ':')
+        end
+
+        def build_signed_image_proxy_url
+          variants = get_options
+          signature = build_encoded_path
+          @encoded_url
+          url = "#{ENV.fetch("IMGPROXY_ENDPOINT")}/#{signature}/#{variants}/#{@encoded_url}.#{request.params[:ext]}"
+        end
+
+        def build_encoded_path
+          salt = ENV.fetch("IMGPROXY_SALT")
+          key = ENV.fetch("IMGPROXY_KEY")
+          @encoded_url = Base64.encode64(@file_url)
+          path = "#{salt}/#{@encoded_url}.#{request.params[:ext]}"
+          digest = OpenSSL::Digest.new("sha256")
+          hmac = Base64.urlsafe_encode64(OpenSSL::HMAC.digest(digest, key, "#{salt}#{path}")).tr("=", "")
+          signed_path = "/#{hmac}#{path}"
         end
 
         def response_failure
