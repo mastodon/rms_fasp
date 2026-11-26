@@ -3,29 +3,26 @@ module Fasp
     module V0
       class PublicMediaController < ApplicationController
         skip_before_action :require_authentication
-        before_action :verify_signature_parameter
 
         def show
-          render json: media_file_response
+          return unless verify_signature_parameter
 
-        rescue FaspBase::Error => e
-          e.message
+          img_proxy_url = build_img_proxy_url
+          set_x_accel_redirect_header(img_proxy_url)
+
+          redirect_to img_proxy_url, allow_other_host: true
+
+        rescue FaspBase::Error
+          respond_to do |format|
+            format.json { head 401 }
+          end
         end
 
         private
-        # TODO
-        # do we only want to allow a certain set of url pathsegments, like
-        # "https://www.example.com/d/567/345" or , "https://www.example.com/s/567/345"
-        # or is it completely free?
-        #
-        # handle different variants
-        # add X-Accel-Redirect header with file url
-        # return file url
-        # request image from image proxy
 
         def verify_signature_parameter
           url = Addressable::URI.parse(request.url)
-          return unless url.query_values["sig"]
+          raise FaspBase::Error unless url.query_values && url.query_values["sig"]
 
           encoded_sig = url.query_values["sig"]
           sig = Base64.decode64(encoded_sig)
@@ -38,8 +35,22 @@ module Fasp
           public_pem = server.public_key_pem
           public_key = OpenSSL::PKey.read(public_pem)
           digest = Digest::SHA256.base64digest(url_string)
+          raise FaspBase::Error unless public_key.verify(nil, sig, digest)
 
-          raise FaspBase::Error, "not verified" unless public_key.verify(nil, sig, digest)
+          true
+        end
+
+        def build_img_proxy_url
+          storage = StorageRequest.find_by(media_file_id: params[:id])
+          response_failure unless storage && storage.state == "ok"
+
+          file_url = storage.media_file.s3_url
+          raise FaspBase::Error unless file_url
+          path = build_path_with_signature(file_url)
+          raise FaspBase::Error unless file_url
+
+          # http://imgproxy.example.com/%signature/%processing_options/%encoded_source_url.%extension
+          url = "#{ENV.fetch("IMGPROXY_ENDPOINT")}#{path}"
         end
 
         def server
@@ -48,38 +59,29 @@ module Fasp
           FaspBase::Server.find_by(namespace: request.params["namespace"])
         end
 
-        def media_file_response
-          storage = StorageRequest.find_by(media_file_id: params[:id])
-          response_failure unless storage.state == "ok"
 
-          @file_url = storage.file_url
-          # how do we store/load the actual file?
-          # media_file_id = storage.media_file
-          build_signed_image_proxy_url
-        end
-
-        def get_options
-          # this only works, when we allow only one processing Option
-          # need fix
-          variants = request.params[:any]
-          variants.gsub!('/', ':')
-        end
-
-        def build_signed_image_proxy_url
-          variants = get_options
-          signature = build_encoded_path
-          @encoded_url
-          url = "#{ENV.fetch("IMGPROXY_ENDPOINT")}/#{signature}/#{variants}/#{@encoded_url}.#{request.params[:ext]}"
-        end
-
-        def build_encoded_path
+        def build_path_with_signature(file_url)
           salt = ENV.fetch("IMGPROXY_SALT")
           key = ENV.fetch("IMGPROXY_KEY")
-          @encoded_url = Base64.encode64(@file_url)
-          path = "#{salt}/#{@encoded_url}.#{request.params[:ext]}"
+          raise FaspBase::Error unless salt && key
+
+          @encoded_source_url = Base64.urlsafe_encode64(file_url).tr("=", "")
+          variants = options_segment
+          path = "#{variants}/#{@encoded_source_url}.#{request.params[:ext]}"
+          # prepend salt to path and calc hmac encode 64
           digest = OpenSSL::Digest.new("sha256")
           hmac = Base64.urlsafe_encode64(OpenSSL::HMAC.digest(digest, key, "#{salt}#{path}")).tr("=", "")
+
           signed_path = "/#{hmac}#{path}"
+        end
+
+        def options_segment
+          # this only works, when with only one processing Option
+          variants = request.params[:any]
+          return "" unless variants
+
+          colon_separated = variants.gsub!("/", ":")
+          "/#{colon_separated}"
         end
 
         def response_failure
@@ -87,6 +89,11 @@ module Fasp
             "status": "failure",
             "error": "NotFound"
           }
+        end
+
+
+        def set_x_accel_redirect_header(redirect_url)
+          response.headers["X-Accel-Redirect"] = redirect_url
         end
       end
     end

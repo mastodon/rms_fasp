@@ -4,30 +4,20 @@ class Fasp::Rms::V0::PublicMediaTest < ActionDispatch::IntegrationTest
   setup do
     @file_id = media_files(:avatar).id
     @file_ext = Rack::Mime::MIME_TYPES.key(media_files(:avatar).content_type)
-
-    server = fasp_base_servers(:mastodon_server)
-    private_pem = server.fasp_private_key_pem
-    key = OpenSSL::PKey.read(private_pem)
-    server.update!(public_key_pem: key.public_to_pem)
-    digest = Digest::SHA256.base64digest("http://www.example.com/fasp/rms/mastodon-example-com/#{@file_id}/s/300/400#{@file_ext}")
-    sign = key.sign(nil, digest)
-    @sig = Base64.encode64(sign)
+    @sig = create_signature
   end
 
-#   test "unauthenticated access is prohibited" do
-#     get fasp_rms_path(id: @file_id, namespace: "mastodon-example-com", ext: @file_ext), params: { sig: @sig }, as: :json
-#
-#     assert_response :unauthorized
-#   end
+  test "unauthenticated access is prohibited" do
+    invalid_sig = @sig + "9g==\n"
+    get fasp_rms_path(id: @file_id, namespace: "mastodon-example-com", ext: "png"), params: { sig: invalid_sig }, as: :json
+
+    assert_response :unauthorized
+  end
 
   test "authenticated request with accessible medium" do
     get fasp_rms_path(id: @file_id, namespace: "mastodon-example-com", ext: "png", any: "/s/300/400", sig: @sig), as: :json
-    assert_response :ok
 
-    parsed_response = JSON.parse(response.body)
-
-    assert parsed_response.is_a?(Hash)
-    assert_equal success_response, parsed_response
+    assert_redirected_to img_proxy_path
   end
 
 
@@ -43,7 +33,18 @@ class Fasp::Rms::V0::PublicMediaTest < ActionDispatch::IntegrationTest
 
   private
 
-  def success_response
-    {}.as_json
+  def img_proxy_path
+    "http://localhost:8080/Za2DlNng4_F9P1_w0UsKzDq-HiY9QHJJiMKytZUTcv0/:s:300:400/czM6Ly9maWxlcy5leGFtcGxlLmNvbS8zNzY5MjY3Njc.png"
+  end
+
+  def create_signature
+    server = fasp_base_servers(:mastodon_server)
+    private_pem = server.fasp_private_key_pem
+    key = OpenSSL::PKey.read(private_pem)
+
+    server.update!(public_key_pem: key.public_to_pem)
+    digest = Digest::SHA256.base64digest("http://www.example.com/fasp/rms/mastodon-example-com/#{@file_id}/s/300/400#{@file_ext}")
+    sign = key.sign(nil, digest)
+    Base64.encode64(sign)
   end
 end
