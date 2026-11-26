@@ -210,7 +210,7 @@ rms_fasp can be configured using environment variables. Here is a
 | `AWS_ACCESS_KEY_ID` | Yes |   | Access key id |
 | `AWS_SECRET_ACCESS_KEY` | Yes |   | Secret key |
 | `AWS_REGION` | No |   | S3 region to use |
-| `S3_BUCKET` | Yes |   | Name of the bucket like 'files.example.com' 
+| `S3_BUCKET` | Yes |   | Name of the bucket like 'files.example.com'
 
 ### imgproxy
 

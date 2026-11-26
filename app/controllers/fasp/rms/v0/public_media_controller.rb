@@ -12,6 +12,10 @@ module Fasp
 
           redirect_to img_proxy_url, allow_other_host: true
 
+        rescue ActiveRecord::RecordNotFound
+          respond_to do |format|
+            format.json { head 404 }
+          end
         rescue FaspBase::Error
           respond_to do |format|
             format.json { head 401 }
@@ -42,7 +46,7 @@ module Fasp
 
         def build_img_proxy_url
           storage = StorageRequest.find_by(media_file_id: params[:id])
-          response_failure unless storage && storage.state == "ok"
+          raise ActiveRecord::RecordNotFound unless storage && storage.state == "ok"
 
           file_url = storage.media_file.s3_url
           raise FaspBase::Error unless file_url
@@ -83,14 +87,6 @@ module Fasp
           colon_separated = variants.gsub!("/", ":")
           "/#{colon_separated}"
         end
-
-        def response_failure
-          {
-            "status": "failure",
-            "error": "NotFound"
-          }
-        end
-
 
         def set_x_accel_redirect_header(redirect_url)
           response.headers["X-Accel-Redirect"] = redirect_url
