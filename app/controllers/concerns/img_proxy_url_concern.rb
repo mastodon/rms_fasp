@@ -51,7 +51,8 @@ module ImgProxyUrlConcern
     @encoded_source_url = Base64.urlsafe_encode64(file_url).tr("=", "")
     variants = options_segment
     path = "#{variants}/#{@encoded_source_url}.#{request.params[:ext]}"
-    # prepend salt to path and calc hmac encode 64
+    # prepend salt to path and calc hmac encode 64 like
+    # <salt>/rs:fill:300:400:0/g:sm/aHR0cDovL2V4YW1w/bGUuY29tL2ltYWdl/cy9jdXJpb3NpdHku/anBn.png
     digest = OpenSSL::Digest.new("sha256")
     hmac = Base64.urlsafe_encode64(OpenSSL::HMAC.digest(digest, key, "#{salt}#{path}")).tr("=", "")
 
