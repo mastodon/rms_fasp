@@ -12,6 +12,8 @@ WebMock.disable_net_connect!(
 
 require_relative "../config/environment"
 require "rails/test_help"
+require "dotenv"
+Dotenv.load(".env.development")
 
 require "minitest/mock"
 

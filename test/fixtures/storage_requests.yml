@@ -6,3 +6,10 @@ one:
   media_file: photo
   file_url: https://fedi.example.com/images/1.jpg
   state: 3
+
+accepted:
+  fasp_base_server: mastodon_server
+  ap_object: public
+  media_file: avatar
+  file_url: https://fedi.example.com/images/1.jpg
+  state: 2

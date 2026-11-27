@@ -9,4 +9,8 @@ class MediaFile < ApplicationRecord
   validates :content_type, presence: true, inclusion: Mime::LOOKUP.keys
   validates :width, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
   validates :height, numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+
+  def s3_url
+    "s3://#{ENV.fetch("S3_BUCKET")}/#{id}"
+  end
 end
