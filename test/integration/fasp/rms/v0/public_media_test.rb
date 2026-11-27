@@ -21,7 +21,7 @@ class Fasp::Rms::V0::PublicMediaTest < ActionDispatch::IntegrationTest
     sig = create_signature
     get fasp_rms_path(id: @file_id, namespace: "mastodon-example-com", ext: "png", any: @any, sig: sig), as: :json
 
-    assert_redirected_to  "http://localhost:8080/xK8JcFn7J08Bs-0qnCVdK7NBfvY2LUH8GXlleOdiW3A/s:300:400/czM6Ly9maWxlcy5leGFtcGxlLmNvbS8zNzY5MjY3Njc.png"
+    assert_redirected_to  "http://localhost:8080/1bv62wFpUHwniGN0aqZIb64HkMGLqvb8swrOV3BEL9g/s:300:400/czM6Ly9maWxlcy5leGFtcGxlLmNvbS8zNzY5MjY3Njc.png"
   end
 
   test "valid request without :any path segment" do
@@ -30,7 +30,7 @@ class Fasp::Rms::V0::PublicMediaTest < ActionDispatch::IntegrationTest
     sig = create_signature
     get fasp_rms_path(id: @file_id, namespace: "mastodon-example-com", ext: "png", sig: sig), as: :json
 
-    assert_redirected_to "http://localhost:8080/TRnfitnJIolsXWBCgz3v_my8dS2bMystCuoilkMo_UQ/czM6Ly9maWxlcy5leGFtcGxlLmNvbS8zNzY5MjY3Njc.png"
+    assert_redirected_to "http://localhost:8080/82aMiGz9Sx_S3WIhC9cbZA-j9JKOODCM54ClcahHdTk/czM6Ly9maWxlcy5leGFtcGxlLmNvbS8zNzY5MjY3Njc.png"
   end
 
   test "valid signature request with invalid id returns a 404 status" do
