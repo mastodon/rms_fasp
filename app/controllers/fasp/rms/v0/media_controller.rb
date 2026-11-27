@@ -6,9 +6,6 @@ module Fasp
 
         def show
           render json: media_response_object
-
-        rescue ActiveRecord::RecordNotFound
-          head :not_found
         end
 
         private
@@ -38,35 +35,35 @@ module Fasp
 
         def shared_response_base
           {
-            "id": @storage_request.id,
-            "activityPub": {
-              "id": @storage_request.ap_object.uri
+            id: @storage_request.id,
+            activityPub: {
+              id: @storage_request.ap_object.uri
             },
-            "originalURL": @storage_request.file_url,
-            "status": @storage_request.state
+            originalURL: @storage_request.file_url,
+            status: @storage_request.state
           }
         end
 
         def response_object_success
           shared_response_base.merge({
-            "contentType": media_file.content_type,
-            "contentLength": media_file.file_size,
-            "contentDigest": media_file.sha512,
-            "metadata": {
-              "height": media_file.height,
-              "width": media_file.width
+            contentType: media_file.content_type,
+            contentLength: media_file.file_size,
+            contentDigest: media_file.sha512,
+            metadata: {
+              height: media_file.height,
+              width: media_file.width
             },
-            "extension": Rack::Mime::MIME_TYPES.key(media_file.content_type),
+            extension: Rack::Mime::MIME_TYPES.key(media_file.content_type),
             # TODO: define representations
-            "representations": []
+            representations: []
           })
         end
 
         def response_object_rejected
           shared_response_base.merge({
-           "reason": {
-             "code": @storage_request.rejection_reason,
-             "message": rejection_reason
+           reason: {
+             code: @storage_request.rejection_reason,
+             message: rejection_reason
            }
           })
         end
