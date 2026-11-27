@@ -2,21 +2,19 @@ module Fasp
   module Rms
     module V0
       class MediaController < Fasp::ApiController
-        before_action :storage_request
+        before_action :set_storage_request
 
         def show
           render json: media_response_object
 
-        rescue => error
+        rescue ActiveRecord::RecordNotFound
           head :not_found
         end
 
         private
 
         def media_response_object
-          raise unless storage_request
-
-          case storage_request.state
+          case @storage_request.state
           when "enqueued", "processing"
             shared_response_base
           when "ok"
@@ -26,13 +24,11 @@ module Fasp
           end
         end
 
-        def storage_request
-          @storage_request = StorageRequest.find_by(id: params[:id])
+        def set_storage_request
+          @storage_request = StorageRequest.find(params[:id])
         end
 
-        def media_file
-          @media_file = @storage_request.media_file
-        end
+        def media_file = @storage_request.media_file
 
         def rejection_reason
           return unless @storage_request.rejection_reason
@@ -44,7 +40,7 @@ module Fasp
           {
             "id": @storage_request.id,
             "activityPub": {
-              "id": @storage_request.ap_object_id
+              "id": @storage_request.ap_object.uri
             },
             "originalURL": @storage_request.file_url,
             "status": @storage_request.state

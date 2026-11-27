@@ -4,7 +4,7 @@ class MediaFile < ApplicationRecord
     RE002: "The media URL doesn't belong to the ActivityPub object",
     RE003: "The ActivityPub object can't be reached",
     RE004: "Content type not supported",
-    RE900: "Other reason, defined by the provider in the message"
+    RE900: "Other reason"
   }
 
   has_many :storage_requests
